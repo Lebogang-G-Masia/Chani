@@ -274,12 +274,45 @@ u64 mask_king_attacks(int square) {
     if ((bitboard << 8)) attacks |= (bitboard << 8);
     if ((bitboard << 9) & not_a_file) attacks |= (bitboard << 9);
 
+    // return attack map
+    return attacks;
+}
+
+// mask bishop attacks
+u64 mask_bishop_attacks(int square) {
+     // result attacks bitboard
+    u64 attacks = 0ULL;
+
+    // initialize ranks & files
+    int rank, file;
+
+    // initialize target ranks & files
+    int target_rank = square / 8;
+    int target_file = square % 8;
+
+    // mask relevent bishop occupancy squares
+    for (rank = target_rank + 1, file = target_file + 1; rank <= 6 && file <= 6; rank++, file++)
+        attacks |= (1ULL << (rank * 8 + file));
+
+    for (rank = target_rank - 1, file = target_file + 1; rank >= 1 && file <= 6; rank--, file++)
+        attacks |= (1ULL << (rank * 8 + file));
+    
+    for (rank = target_rank + 1, file = target_file - 1; rank <= 6 && file >= 1; rank++, file--)
+        attacks |= (1ULL << (rank * 8 + file));
+
+    for (rank = target_rank - 1, file = target_file - 1; rank >= 1 && file >= 1; rank--, file--)
+        attacks |= (1ULL << (rank * 8 + file));
 
 
+    // piece bitboard
+    u64 bitboard = 0ULL;
 
+    // set piece on board
+    set_bit(bitboard, square);
 
     // return attack map
     return attacks;
+
 }
 
 // initialize leaper pieces attacks
@@ -311,7 +344,8 @@ int main() {
     init_leaper_attacks();
     // loop over 64 squares
     for (int square = 0; square < 64; square++)
-        print_bitboard(king_attacks[square]);
+        print_bitboard(mask_bishop_attacks(square));
+    
 
  
     
