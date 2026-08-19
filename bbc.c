@@ -346,6 +346,91 @@ u64 mask_rook_attacks(int square) {
     return attacks;
 }
 
+// generate bishop attacks on the fly
+u64 bishop_attacks_on_the_fly(int square, u64 block) {
+     // result attacks bitboard
+    u64 attacks = 0ULL;
+
+    // initialize ranks & files
+    int rank, file;
+
+    // initialize target ranks & files
+    int target_rank = square / 8;
+    int target_file = square % 8;
+
+
+    // generate bishop attacks
+    for (rank = target_rank + 1, file = target_file + 1; rank <= 7 && file <= 7; rank++, file++) {
+        attacks |= (1ULL << (rank * 8 + file));
+        if ((1ULL << (rank * 8 + file)) & block) break;
+    }
+
+    for (rank = target_rank - 1, file = target_file + 1; rank >= 0 && file <= 7; rank--, file++) {
+        attacks |= (1ULL << (rank * 8 + file));
+        if ((1ULL << (rank * 8 + file)) & block) break;
+    }
+    
+    for (rank = target_rank + 1, file = target_file - 1; rank <= 7 && file >= 0; rank++, file--) {
+        attacks |= (1ULL << (rank * 8 + file));
+        if ((1ULL << (rank * 8 + file)) & block) break;
+    }
+
+    for (rank = target_rank - 1, file = target_file - 1; rank >= 0 && file >= 0; rank--, file--) {
+        attacks |= (1ULL << (rank * 8 + file));
+        if ((1ULL << (rank * 8 + file)) & block) break;
+    }
+
+
+    // piece bitboard
+    u64 bitboard = 0ULL;
+
+    // set piece on board
+    set_bit(bitboard, square);
+
+    // return attack map
+    return attacks;
+
+}
+
+// generate rook attacks on the fly
+u64 rook_attacks_on_the_fly(int square, u64 block) {
+     // result attacks bitboard
+    u64 attacks = 0ULL;
+
+    // initialize ranks & files
+    int rank, file;
+
+    // initialize target ranks & files
+    int target_rank = square / 8;
+    int target_file = square % 8;
+
+    for (rank = target_rank + 1; rank <= 7; rank++) {
+        attacks |= (1ULL << (rank * 8 + target_file));
+        if ((1ULL << (rank * 8 + target_file)) & block) break;
+    }
+    for (rank = target_rank - 1; rank >= 0; rank--) {
+        attacks |= (1ULL << (rank * 8 + target_file));
+        if ((1ULL << (rank * 8 + target_file)) & block) break;
+    }
+    for (file = target_file + 1; file <= 7; file++) {
+        attacks |= (1ULL << (target_rank * 8 + file));
+        if ((1ULL << (target_rank * 8 + file)) & block) break;
+    }
+    for (file = target_file - 1; file >= 0; file--) {
+        attacks |= (1ULL << (target_rank * 8 + file));
+        if ((1ULL << (target_rank * 8 + file)) & block) break;
+    }
+
+    // piece bitboard
+    u64 bitboard = 0ULL;
+
+    // set piece on board
+    set_bit(bitboard, square);
+
+    // return attack map
+    return attacks;
+}
+
 // initialize leaper pieces attacks
 void init_leaper_attacks() {
     // loop over 64 board squares
@@ -374,14 +459,17 @@ int main() {
     // initialzie leaper attacks
     init_leaper_attacks();
     // loop over 64 squares
-    for (int square = 0; square < 64; square++)
-        print_bitboard(mask_rook_attacks(square));
 
-    
+    // init occupancy bitboard
+    u64 block = 0ULL;
+    set_bit(block, d7);
+    set_bit(block, g4);
+    set_bit(block, b4);
+    set_bit(block, d2);
+    print_bitboard(block);
 
- 
-    
-    
+    print_bitboard(rook_attacks_on_the_fly(d4, block));
+
     return 0;
 }
 
