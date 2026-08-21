@@ -35,7 +35,8 @@ enum {
     BLACK
 };
 
-/*"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
+const char* square_to_coordinate[] = { 
+"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
 "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
 "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
 "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
@@ -43,7 +44,8 @@ enum {
 "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
 "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
 "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
-*/
+};
+
 
 /*********************************************************
  *********************************************************
@@ -73,6 +75,17 @@ static inline int count_bits(u64 bitboard) {
 
     // return bit counter
     return count;
+}
+
+// get least significant first bit index
+static inline int get_ls1b_index(u64 bitboard) {
+    // make sure that the bitboard is not zero
+    if (bitboard) {
+        // count trailing bits before LS1B
+        return count_bits((bitboard & -bitboard) - 1);
+    } 
+
+    return -1;
 }
 
 /*********************************************************
@@ -471,7 +484,6 @@ void init_leaper_attacks() {
 *********************************************************/
 
 
-
 int main() {
     // initialzie leaper attacks
     init_leaper_attacks();
@@ -486,7 +498,13 @@ int main() {
     set_bit(block, d1);
     print_bitboard(block);
 
-    printf("bit count: %d\n", count_bits(block));
+    int ls1b_index = get_ls1b_index(block);
+
+    printf("index: %d\tcoordinate: %s\n", ls1b_index, square_to_coordinate[ls1b_index]);
+
+    u64 test_bitboard = 0ULL;
+    set_bit(test_bitboard, ls1b_index);
+    print_bitboard(test_bitboard);
 
     return 0;
 }
