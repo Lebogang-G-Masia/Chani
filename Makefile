@@ -1,8 +1,16 @@
-all:
-	gcc -oFast bbc.c -o bbc
-	
-debug:
-	gcc bbc.c -o bbc
+CC = gcc
+CFLAGS = -Wall -Wextra
+SRC = $(wildcard src/*.c)
+TARGET = chani
+
+all: $(TARGET)
+
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) $^ -o $@
+
+debug: $(SRC)
+	$(CC) $(CFLAGS) -g $^ -o $(TARGET)
 
 clean:
-	rm -rf bbc
+	rm -rf $(TARGET)
+
