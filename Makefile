@@ -12,5 +12,11 @@ debug: $(SRC)
 	$(CC) $(CFLAGS) -g $^ -o $(TARGET)
 
 clean:
-	rm -rf $(TARGET)
+	rm -rf $(TARGET) $(TEST_TARGET)
 
+TEST_SRC = $(filter-out src/main.c, $(wildcard src/*.c)) tests/main_test.c
+TEST_TARGET = test_chani
+
+test: $(TEST_SRC)
+	$(CC) $(CFLAGS) -g $^ -o $(TEST_TARGET)
+	./$(TEST_TARGET)
