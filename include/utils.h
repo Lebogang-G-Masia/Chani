@@ -21,5 +21,8 @@ enum {
 
 extern const char* square_to_coordinates[];
 
+void init();
+
+
 
 #endif // CHANI_UTILS

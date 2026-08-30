@@ -3,6 +3,11 @@
 
 #include "utils.h"
 
+enum {
+    ROOK,
+    BISHOP
+};
+
 extern const u64 not_a_file;
 extern const u64 not_h_file;
 extern const u64 not_ab_file;
