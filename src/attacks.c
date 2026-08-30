@@ -6,6 +6,29 @@ const u64 not_h_file = 9187201950435737471ULL;
 const u64 not_ab_file = 18229723555195321596ULL;
 const u64 not_hg_file = 4557430888798830399ULL;
 
+const int bishop_relevant_bits[64] = {
+    6,  5,  5,  5,  5,  5,  5,  6,
+    5,  5,  5,  5,  5,  5,  5,  5,
+    5,  5,  7,  7,  7,  7,  5,  5,
+    5,  5,  7,  9,  9,  7,  5,  5,
+    5,  5,  7,  9,  9,  7,  5,  5,
+    5,  5,  7,  7,  7,  7,  5,  5,
+    5,  5,  5,  5,  5,  5,  5,  5,
+    6,  5,  5,  5,  5,  5,  5,  6
+};
+
+
+const int rook_relevant_bits[64] = {
+    12,  11,  11,  11,  11,  11,  11,  12,
+    11,  10,  10,  10,  10,  10,  10,  11,
+    11,  10,  10,  10,  10,  10,  10,  11,
+    11,  10,  10,  10,  10,  10,  10,  11,
+    11,  10,  10,  10,  10,  10,  10,  11,
+    11,  10,  10,  10,  10,  10,  10,  11,
+    11,  10,  10,  10,  10,  10,  10,  11,
+    12,  11,  11,  11,  11,  11,  11,  12
+};
+
 u64 pawn_attacks[2][64];
 u64 knight_attacks[64];
 u64 king_attacks[64];
@@ -75,11 +98,11 @@ u64 mask_bishop_attacks(int square) {
 
     for (rank = target_rank + 1, file = target_file + 1; rank <= 6 && file <= 6; rank++, file++)
         attacks |= (1ULL << (rank * 8 + file));
-    for (rank = target_rank + 1, file = target_file + 1; rank <= 6 && file <= 6; rank++, file++)
+    for (rank = target_rank - 1, file = target_file + 1; rank >= 1 && file <= 6; rank--, file++)
         attacks |= (1ULL << (rank * 8 + file));
-    for (rank = target_rank + 1, file = target_file + 1; rank <= 6 && file <= 6; rank++, file++)
+    for (rank = target_rank + 1, file = target_file - 1; rank <= 6 && file >= 1; rank++, file--)
         attacks |= (1ULL << (rank * 8 + file));
-    for (rank = target_rank + 1, file = target_file + 1; rank <= 6 && file <= 6; rank++, file++)
+    for (rank = target_rank - 1, file = target_file - 1; rank >= 1 && file >= 1; rank--, file--)
         attacks |= (1ULL << (rank * 8 + file));
 
     return attacks;
@@ -192,64 +215,3 @@ u64 set_occupancy(int index, int bits_in_mask, u64 attack_mask) {
     
     return occupancy;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -8,6 +8,9 @@ extern const u64 not_h_file;
 extern const u64 not_ab_file;
 extern const u64 not_hg_file;
 
+extern const int bishop_relevant_bits[64];
+extern const int rook_relevant_bits[64];
+
 extern u64 pawn_attacks[2][64];
 extern u64 knight_attacks[64];
 extern u64 king_attacks[64];

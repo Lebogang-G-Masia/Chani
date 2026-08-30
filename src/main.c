@@ -6,11 +6,14 @@
 
 int main() {
     init_leaper_attacks();
-    u64 attack_mask = mask_bishop_attacks(b4);
 
-    for (int index = 0; index < 100; index++) {
-        print_bitboard(set_occupancy(index, count_bits(attack_mask), attack_mask));
-        getchar();
+    for (int rank = 0; rank < 8; rank++) {
+        for (int file = 0; file < 8; file++) {
+            int square = rank * 8 + file;
+
+            printf(" %d, ", count_bits(mask_bishop_attacks(square)));
+        }
+        printf("\n");
     }
 
     return 0;
