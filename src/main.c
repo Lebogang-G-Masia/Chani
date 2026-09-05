@@ -4,27 +4,23 @@
 #include "../include/attacks.h"
 #include "../include/prng.h"
 #include "../include/magics.h"
+#include "../include/board.h"
 #include <stdio.h>
 
 int main() {
 
     init();
+    
+    SET_BIT(bitboards[P], e2);
+    print_bitboard(bitboards[P]);
 
-    u64 occupancy = 0ULL;
+#ifdef WIN64
+    printf("piece: %c\n", ascii_pieces[P]);
+    printf("piece: %c\n", ascii_pieces[char_pieces['K']]);
+#else
+    printf("piece: %s\n", unicode_pieces[P]);
+    printf("piece: %s\n", unicode_pieces[char_pieces['K']]);
+#endif
 
-    SET_BIT(occupancy, c5);
-    SET_BIT(occupancy, f2);
-    SET_BIT(occupancy, g7);
-    SET_BIT(occupancy, b2);
-    SET_BIT(occupancy, g5);
-    SET_BIT(occupancy, e2);
-    SET_BIT(occupancy, e7);
-
-    print_bitboard(occupancy);
-    print_bitboard(get_bishop_attacks(d4, occupancy));
-
-
-    print_bitboard(get_rook_attacks(e5, occupancy));
-     
     return 0;
 }

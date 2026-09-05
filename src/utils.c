@@ -1,6 +1,5 @@
 #include "../include/utils.h"
 #include "../include/attacks.h"
-#include "../include/magics.h"
 
 const char* square_to_coordinates[] = {
     "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
@@ -12,6 +11,26 @@ const char* square_to_coordinates[] = {
     "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
     "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
 };
+
+char ascii_pieces[] = "PNBRQKpnbrqk";
+char *unicode_pieces[12] = {"♙", "♘", "♗", "♖", "♕", "♔", "♟︎", "♞", "♝", "♜", "♛", "♚"};
+// char *unicode_pieces[12] = {"♟︎", "♞", "♝", "♜", "♛", "♚", "♙", "♘", "♗", "♖", "♕", "♔"};
+int char_pieces[] = {
+    ['P'] = P,
+    ['N'] = N,
+    ['B'] = B,
+    ['R'] = R,
+    ['Q'] = Q,
+    ['K'] = K,
+    ['p'] = p,
+    ['n'] = n,
+    ['b'] = b,
+    ['r'] = r,
+    ['q'] = q,
+    ['k'] = k,
+
+};
+
 
 void init() {
     init_leaper_attacks();

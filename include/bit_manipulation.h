@@ -3,9 +3,9 @@
 
 #include "utils.h"
 
-#define SET_BIT(bitboard, square) (bitboard |= (1ULL << square))
-#define GET_BIT(bitboard, square) (bitboard & (1ULL << square))
-#define POP_BIT(bitboard, square) (GET_BIT(bitboard, square) ? bitboard ^= (1ULL << square) : 0)
+#define SET_BIT(bitboard, square) ((bitboard) |= (1ULL << (square)))
+#define GET_BIT(bitboard, square) ((bitboard) & (1ULL << (square)))
+#define POP_BIT(bitboard, square) ((bitboard) &= ~(1ULL << (square)))
 
 static inline int count_bits(u64 bitboard) {
     int count = 0;
