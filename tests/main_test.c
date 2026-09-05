@@ -85,6 +85,35 @@ void test_io() {
     ASSERT_TEST(1, "print_bitboard is reachable and linkable");
 }
 
+void test_leaper_attacks_init() {
+    init_leaper_attacks();
+    ASSERT_TEST(pawn_attacks[WHITE][e4] == mask_pawn_attacks(WHITE, e4), "pawn_attacks initialized");
+    ASSERT_TEST(knight_attacks[e4] == mask_knight_attacks(e4), "knight_attacks initialized");
+    ASSERT_TEST(king_attacks[e4] == mask_king_attacks(e4), "king_attacks initialized");
+    ASSERT_TEST(pawn_attacks[WHITE][a2] == mask_pawn_attacks(WHITE, a2), "pawn edge case");
+}
+
+void test_set_occupancy() {
+    u64 mask = 0x11ULL;
+    ASSERT_TEST(set_occupancy(0, 2, mask) == 0ULL, "occupancy index 0");
+    ASSERT_TEST(set_occupancy(1, 2, mask) == 0x1ULL, "occupancy index 1");
+    ASSERT_TEST(set_occupancy(2, 2, mask) == 0x10ULL, "occupancy index 2");
+    ASSERT_TEST(set_occupancy(3, 2, mask) == 0x11ULL, "occupancy index 3");
+}
+
+void test_sliders_attacks_init() {
+    init_sliders_attacks(BISHOP);
+    init_sliders_attacks(ROOK);
+    
+    u64 empty = 0ULL;
+    ASSERT_TEST(get_bishop_attacks(e4, empty) == bishop_attacks_on_the_fly(e4, empty), "bishop magic empty");
+    ASSERT_TEST(get_rook_attacks(e4, empty) == rook_attacks_on_the_fly(e4, empty), "rook magic empty");
+    
+    u64 block = (1ULL << d5) | (1ULL << e6);
+    ASSERT_TEST(get_bishop_attacks(e4, block) == bishop_attacks_on_the_fly(e4, block), "bishop magic blocked");
+    ASSERT_TEST(get_rook_attacks(e4, block) == rook_attacks_on_the_fly(e4, block), "rook magic blocked");
+}
+
 int main() {
     printf("==================================================\n");
     printf("RUNNING TESTS\n");
@@ -98,6 +127,9 @@ int main() {
     test_rook_attacks();
     test_attacks_on_the_fly();
     test_io();
+    test_leaper_attacks_init();
+    test_set_occupancy();
+    test_sliders_attacks_init();
     
     printf("==================================================\n");
     printf("TEST SUMMARY\n");
