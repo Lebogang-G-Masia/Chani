@@ -15,6 +15,8 @@ const char* square_to_coordinates[] = {
 
 void init() {
     init_leaper_attacks();
+    init_sliders_attacks(BISHOP);
+    init_sliders_attacks(ROOK);
 
     // init_magic_numbers();
 }

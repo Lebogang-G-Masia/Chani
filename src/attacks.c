@@ -1,5 +1,6 @@
 #include "../include/attacks.h"
 #include "../include/bit_manipulation.h"
+#include "../include/magics.h"
 
 const u64 not_a_file = 18374403900871474942ULL;
 const u64 not_h_file = 9187201950435737471ULL;
@@ -32,6 +33,11 @@ const int rook_relevant_bits[64] = {
 u64 pawn_attacks[2][64];
 u64 knight_attacks[64];
 u64 king_attacks[64];
+u64 bishop_masks[64];
+u64 rook_masks[64];
+u64 bishop_attacks[64][512];
+u64 rook_attacks[64][4096];
+
 
 u64 mask_pawn_attacks(int side, int square) {
     u64 attacks = 0ULL;
@@ -214,4 +220,29 @@ u64 set_occupancy(int index, int bits_in_mask, u64 attack_mask) {
     }
     
     return occupancy;
+}
+
+void init_sliders_attacks(int bishop_flag) {
+    for (int square = 0; square < 64; square++) {
+        bishop_masks[square] = mask_bishop_attacks(square);
+        rook_masks[square] = mask_rook_attacks(square);
+
+        u64 attack_mask = bishop_flag ? bishop_masks[square] : rook_masks[square];
+        
+        int relevant_bits_count = count_bits(attack_mask);
+
+        int occupancy_indicies = (1 << relevant_bits_count);
+
+        for (int index = 0; index < occupancy_indicies; index++) {
+            if (bishop_flag) {
+                u64 occupancy = set_occupancy(index, relevant_bits_count, attack_mask);
+                int magic_index = (occupancy * bishop_magic_numbers[square]) >> (64 - bishop_relevant_bits[square]);
+                bishop_attacks[square][magic_index] = bishop_attacks_on_the_fly(square, occupancy);
+            } else {
+                u64 occupancy = set_occupancy(index, relevant_bits_count, attack_mask);
+                int magic_index = (occupancy * rook_magic_numbers[square]) >> (64 - rook_relevant_bits[square]);
+                rook_attacks[square][magic_index] = rook_attacks_on_the_fly(square, occupancy);
+            }
+        }
+    }
 }

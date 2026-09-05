@@ -16,8 +16,7 @@ u64 rook_magic_numbers[64] = {
     0x2080088004402900ULL,
     0x800098204000ULL,
     0x2024401000200040ULL,
-    0x100802000801000ULL,
-    0x120800800801000ULL,
+    0x100802000801000ULL, 0x120800800801000ULL,
     0x208808088000400ULL,
     0x2802200800400ULL,
     0x2200800100020080ULL,
@@ -189,3 +188,5 @@ void init_magic_numbers() {
         bishop_magic_numbers[square] = find_magic_number(square, bishop_relevant_bits[square], BISHOP);
     }
 }
+
+
