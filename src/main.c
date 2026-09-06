@@ -12,5 +12,9 @@ int main() {
 
     init();
 
-    return 0;
+    parse_fen(start_position);
+    print_board();
+    print_attacked_squares(BLACK);
+
+   return 0;
 }

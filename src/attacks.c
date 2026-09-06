@@ -68,7 +68,7 @@ u64 mask_knight_attacks(int square) {
     if ((bitboard >> 6) & not_ab_file) attacks |= (bitboard >> 6);
 
     if ((bitboard << 17) & not_a_file) attacks |= (bitboard << 17);
-    if ((bitboard << 15) & not_h_file) attacks |= (bitboard << 17);
+    if ((bitboard << 15) & not_h_file) attacks |= (bitboard << 15);
     if ((bitboard << 10) & not_ab_file) attacks |= (bitboard << 10);
     if ((bitboard << 6) & not_hg_file) attacks |= (bitboard << 6);
 

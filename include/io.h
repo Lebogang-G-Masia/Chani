@@ -13,6 +13,8 @@
 void print_bitboard(u64);
 void print_board();
 void parse_fen(char*);
+void print_attacked_squares(int);
+
 
 
 #endif // CHANI_IO
