@@ -5,6 +5,7 @@
 #include "../include/prng.h"
 #include "../include/magics.h"
 #include "../include/board.h"
+#include "../include/generator.h"
 
 #include <stdio.h>
 
@@ -12,5 +13,6 @@ int main() {
 
     init();
 
-   return 0;
+    return 0;
+
 }

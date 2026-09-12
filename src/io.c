@@ -1,7 +1,7 @@
 #include "../include/io.h"
 #include "../include/bit_manipulation.h"
 #include "../include/board.h"
-#include "../include/attacks.h"
+#include "../include/generator.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -87,6 +87,7 @@ void parse_fen(char *fen) {
             
         }
     }
+
     fen++;
     side = (*fen == 'w') ? WHITE : BLACK;
 
