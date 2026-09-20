@@ -173,9 +173,28 @@ static inline void generate_moves() {
                     target_square = get_ls1b_index(attacks);
                     
                     if (!GET_BIT(((side == WHITE) ? occupancies[BLACK] : occupancies[WHITE]), target_square))
-                            printf("%s%s\tpiece move\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("%s%s\tknight move\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                     else
-                             printf("%s%s\tpiece capture\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);                   
+                             printf("%s%s\tknight capture\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);                   
+
+                    POP_BIT(attacks, target_square);
+                }
+
+                POP_BIT(bitboard, source_square);
+            }
+        }
+
+        if ((side == WHITE) ? piece == B : piece == b) {
+            while (bitboard) {
+                source_square = get_ls1b_index(bitboard);
+                attacks = get_bishop_attacks(source_square, occupancies[BOTH]) & ((side == WHITE) ? ~occupancies[WHITE] : ~occupancies[BLACK]);
+                while (attacks) {
+                    target_square = get_ls1b_index(attacks);
+                    
+                    if (!GET_BIT(((side == WHITE) ? occupancies[BLACK] : occupancies[WHITE]), target_square))
+                            printf("%s%s\tbishop move\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                    else
+                             printf("%s%s\tbishop capture\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);                   
 
                     POP_BIT(attacks, target_square);
                 }
