@@ -34,51 +34,92 @@ static inline void generate_moves() {
                     target_square = source_square - 8;
 
                     if (!(target_square < a8) && !GET_BIT(occupancies[BOTH], target_square)) {
-                        // pawn promotion
                         if (source_square >= a7 && source_square <= h7) {
                             printf("pawn promotion: %s%sq\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
-                            printf("pawn promotion: %s%sr\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                             printf("pawn promotion: %s%sb\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                             printf("pawn promotion: %s%sn\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("pawn promotion: %s%sr\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                         } else {
-                            // one square ahead pawn move
-                             printf("pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
-                            // two squares ahead pawn move
-                            if ((source_square >= a2 && source_square <= h2) && !GET_BIT(occupancies[BOTH], target_square - 8))
-                                printf("double pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square - 8]);
-                            
+                            printf("pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                         }
+                        if ((source_square >= a2 && source_square <= h2) && !GET_BIT(occupancies[BOTH], target_square - 8)) 
+                            printf("double pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square - 8]);
                     }
 
                     POP_BIT(bitboard, source_square);
+
+                    attacks = pawn_attacks[side][source_square] & occupancies[BLACK];
+
+                    while (attacks) {
+                        target_square = get_ls1b_index(attacks);
+                        if (source_square >= a7 && source_square <= h7) {
+                            printf("pawn promotion capture: %s%sq\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("pawn promotion capture: %s%sb\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("pawn promotion capture: %s%sn\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("pawn promotion capture: %s%sr\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                        } else {
+                            printf("pawn capture: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                        }
+                        POP_BIT(attacks, target_square);
+                    }
+
+                    if (enpassant != no_sq) {
+                        u64 enpassant_attacks = pawn_attacks[side][source_square] & (1ULL << enpassant);
+
+                        if (enpassant_attacks) {
+                            int target_enpassant = get_ls1b_index(enpassant_attacks);
+                            printf("pawn enpassant capture: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_enpassant]);
+                        }
+                    }
                 }
             }
         } else {
-            if (piece == p) {
+             if (piece == p) {
                 while (bitboard) {
                     source_square = get_ls1b_index(bitboard);
                     target_square = source_square + 8;
 
                     if (!(target_square > h1) && !GET_BIT(occupancies[BOTH], target_square)) {
-                        // pawn promotion
                         if (source_square >= a2 && source_square <= h2) {
                             printf("pawn promotion: %s%sq\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
-                            printf("pawn promotion: %s%sr\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                             printf("pawn promotion: %s%sb\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                             printf("pawn promotion: %s%sn\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("pawn promotion: %s%sr\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                         } else {
-                            // one square ahead pawn move
-                             printf("pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
-                            // two squares ahead pawn move
-                            if ((source_square >= a7 && source_square <= h7) && !GET_BIT(occupancies[BOTH], target_square + 8))
-                                printf("double pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square + 8]);
-                            
+                            printf("pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
                         }
+                        if ((source_square >= a7 && source_square <= h7) && !GET_BIT(occupancies[BOTH], target_square + 8)) 
+                            printf("double pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square + 8]);
                     }
 
                     POP_BIT(bitboard, source_square);
+
+                    attacks = pawn_attacks[side][source_square] & occupancies[WHITE];
+
+                    while (attacks) {
+                        target_square = get_ls1b_index(attacks);
+                        if (source_square >= a2 && source_square <= h2) {
+                            printf("pawn promotion capture: %s%sq\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("pawn promotion capture: %s%sb\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("pawn promotion capture: %s%sn\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                            printf("pawn promotion capture: %s%sr\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                        } else {
+                            printf("pawn capture: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square]);
+                        }
+                        POP_BIT(attacks, target_square);
+                    }
+
+                    if (enpassant != no_sq) {
+                        u64 enpassant_attacks = pawn_attacks[side][source_square] & (1ULL << enpassant);
+
+                        if (enpassant_attacks) {
+                            int target_enpassant = get_ls1b_index(enpassant_attacks);
+                            printf("pawn enpassant capture: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_enpassant]);
+                        }
+                    }
                 }
             }
+                       
         }
     }
 }
