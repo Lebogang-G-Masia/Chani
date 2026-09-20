@@ -46,7 +46,6 @@ static inline void generate_moves() {
                             printf("double pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square - 8]);
                     }
 
-                    POP_BIT(bitboard, source_square);
 
                     attacks = pawn_attacks[side][source_square] & occupancies[BLACK];
 
@@ -71,6 +70,7 @@ static inline void generate_moves() {
                             printf("pawn enpassant capture: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_enpassant]);
                         }
                     }
+                    POP_BIT(bitboard, source_square);
                 }
             }
         } else {
@@ -92,7 +92,6 @@ static inline void generate_moves() {
                             printf("double pawn push: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_square + 8]);
                     }
 
-                    POP_BIT(bitboard, source_square);
 
                     attacks = pawn_attacks[side][source_square] & occupancies[WHITE];
 
@@ -117,6 +116,7 @@ static inline void generate_moves() {
                             printf("pawn enpassant capture: %s%s\n", square_to_coordinates[source_square], square_to_coordinates[target_enpassant]);
                         }
                     }
+                    POP_BIT(bitboard, source_square);
                 }
             }
                        
