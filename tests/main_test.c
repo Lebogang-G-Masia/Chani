@@ -1,8 +1,13 @@
 #include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
 #include "../include/utils.h"
 #include "../include/bit_manipulation.h"
 #include "../include/attacks.h"
 #include "../include/io.h"
+#include "../include/board.h"
+#include "../include/generator.h"
 
 int tests_run = 0;
 int tests_passed = 0;
@@ -80,6 +85,70 @@ void test_attacks_on_the_fly() {
     ASSERT_TEST(count_bits(r_attacks) > 0, "rook_attacks_on_the_fly on e4 should generate attacks");
 }
 
+void test_is_square_attacked() {
+    init_leaper_attacks();
+    init_sliders_attacks(BISHOP);
+    init_sliders_attacks(ROOK);
+
+    for (int i = 0; i < 12; i++) bitboards[i] = 0ULL;
+    for (int i = 0; i < 3; i++) occupancies[i] = 0ULL;
+
+    SET_BIT(bitboards[P], e4);
+    occupancies[WHITE] |= (1ULL << e4);
+    occupancies[BOTH] |= (1ULL << e4);
+
+    ASSERT_TEST(is_square_attacked(d5, WHITE) == 1, "is_square_attacked: d5 attacked by white pawn on e4");
+    ASSERT_TEST(is_square_attacked(f5, WHITE) == 1, "is_square_attacked: f5 attacked by white pawn on e4");
+    ASSERT_TEST(is_square_attacked(e5, WHITE) == 0, "is_square_attacked: e5 not attacked by white pawn on e4");
+
+    SET_BIT(bitboards[n], d4);
+    occupancies[BLACK] |= (1ULL << d4);
+    occupancies[BOTH] |= (1ULL << d4);
+
+    ASSERT_TEST(is_square_attacked(e2, BLACK) == 1, "is_square_attacked: e2 attacked by black knight on d4");
+    ASSERT_TEST(is_square_attacked(e3, BLACK) == 0, "is_square_attacked: e3 not attacked by black knight on d4");
+}
+
+void test_generate_moves() {
+    for (int i = 0; i < 12; i++) bitboards[i] = 0ULL;
+    for (int i = 0; i < 3; i++) occupancies[i] = 0ULL;
+
+    SET_BIT(bitboards[P], e2);
+    occupancies[WHITE] |= (1ULL << e2);
+    occupancies[BOTH] |= (1ULL << e2);
+
+    SET_BIT(bitboards[p], d3);
+    occupancies[BLACK] |= (1ULL << d3);
+    occupancies[BOTH] |= (1ULL << d3);
+
+    side = WHITE;
+    enpassant = no_sq;
+
+    int saved_stdout = dup(STDOUT_FILENO);
+    int temp_fd = open("temp_moves.txt", O_RDWR | O_CREAT | O_TRUNC, 0666);
+    dup2(temp_fd, STDOUT_FILENO);
+
+    generate_moves();
+    fflush(stdout);
+
+    dup2(saved_stdout, STDOUT_FILENO);
+    close(saved_stdout);
+
+    char buffer[1024] = {0};
+    lseek(temp_fd, 0, SEEK_SET);
+    read(temp_fd, buffer, sizeof(buffer) - 1);
+    close(temp_fd);
+    remove("temp_moves.txt");
+
+    ASSERT_TEST(strstr(buffer, "pawn push: e2e3") != NULL, "generate_moves: generates pawn push e2e3");
+    ASSERT_TEST(strstr(buffer, "double pawn push: e2e4") != NULL, "generate_moves: generates double pawn push e2e4");
+    ASSERT_TEST(strstr(buffer, "pawn capture: e2d3") != NULL, "generate_moves: generates pawn capture e2d3");
+    
+    // Negative checks to ensure invalid moves aren't generated
+    ASSERT_TEST(strstr(buffer, "pawn capture: e2f3") == NULL, "generate_moves: does NOT generate invalid capture e2f3");
+    ASSERT_TEST(strstr(buffer, "pawn push: e2e5") == NULL, "generate_moves: does NOT generate invalid push e2e5");
+}
+
 void test_io() {
     // Just a placeholder test to ensure it links properly
     ASSERT_TEST(1, "print_bitboard is reachable and linkable");
@@ -126,6 +195,8 @@ int main() {
     test_bishop_attacks();
     test_rook_attacks();
     test_attacks_on_the_fly();
+    test_is_square_attacked();
+    test_generate_moves();
     test_io();
     test_leaper_attacks_init();
     test_set_occupancy();
