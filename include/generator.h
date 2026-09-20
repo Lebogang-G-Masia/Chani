@@ -73,6 +73,28 @@ static inline void generate_moves() {
                     POP_BIT(bitboard, source_square);
                 }
             }
+            if (piece == K) {
+                if (castle & WK) {
+                    if (!GET_BIT(occupancies[BOTH], f1) &&
+                            !GET_BIT(occupancies[BOTH], g1)) {
+                        if (!is_square_attacked(e1, BLACK) &&
+                                !is_square_attacked(f1, BLACK))
+                            printf("castling move: e1g1\n");
+                        
+                    }
+                }
+
+                if (castle & WQ) {
+                    if (!GET_BIT(occupancies[BOTH], d1) &&
+                            !GET_BIT(occupancies[BOTH], c1) &&
+                            !GET_BIT(occupancies[BOTH], b1)) {
+                        if (!is_square_attacked(e1, BLACK) &&
+                                !is_square_attacked(d1, BLACK)) {
+                            printf("castling move: e1c1\n");
+                        }
+                    }
+                }
+            }
         } else {
              if (piece == p) {
                 while (bitboard) {
@@ -119,7 +141,28 @@ static inline void generate_moves() {
                     POP_BIT(bitboard, source_square);
                 }
             }
-                       
+            if (piece == k) {
+                if (castle & BK) {
+                    if (!GET_BIT(occupancies[BOTH], f8) &&
+                            !GET_BIT(occupancies[BOTH], g8)) {
+                        if (!is_square_attacked(e8, WHITE) &&
+                                !is_square_attacked(f8, WHITE))
+                            printf("castling move: e8g8\n");
+                        
+                    }
+                }
+
+                if (castle & BQ) {
+                    if (!GET_BIT(occupancies[BOTH], d8) &&
+                            !GET_BIT(occupancies[BOTH], c8) &&
+                            !GET_BIT(occupancies[BOTH], b8)) {
+                        if (!is_square_attacked(e8, WHITE) &&
+                                !is_square_attacked(d8, WHITE)) {
+                            printf("castling move: e8c8\n");
+                        }
+                    }
+                }
+            }
         }
     }
 }
