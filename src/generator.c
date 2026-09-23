@@ -18,6 +18,12 @@ void print_move(int move) {
 }
 
 void print_move_list(moves* move_list) {
+
+    if (move_list->count == 0) {
+        printf("\n    No moves in move list!\n");
+        return;
+    }
+
     printf("\n    move        piece        capture        double push        enpassant        castling\n");
     for (int move_count = 0; move_count < move_list->count; move_count++) {
         int move = move_list->moves[move_count];
@@ -25,7 +31,7 @@ void print_move_list(moves* move_list) {
         printf("    %s%s%c       %c            %d              %d                  %d                %d\n", 
                 square_to_coordinates[GET_MOVE_SOURCE(move)], 
                 square_to_coordinates[GET_MOVE_TARGET(move)], 
-                promoted_pieces[GET_MOVE_PROMOTED(move)],
+                GET_MOVE_PROMOTED(move) ? promoted_pieces[GET_MOVE_PROMOTED(move)] : ' ',
                 ascii_pieces[GET_MOVE_PIECE(move)],
                 GET_MOVE_CAPTURE(move) ? 1 : 0,
                 GET_MOVE_DOUBLE_PUSH(move) ? 1 : 0,
@@ -36,7 +42,7 @@ void print_move_list(moves* move_list) {
         printf("    %s%s%c       %s            %d              %d                  %d                %d\n", 
                 square_to_coordinates[GET_MOVE_SOURCE(move)], 
                 square_to_coordinates[GET_MOVE_TARGET(move)], 
-                promoted_pieces[GET_MOVE_PROMOTED(move)],
+                GET_MOVE_PROMOTED(move) ? promoted_pieces[GET_MOVE_PROMOTED(move)] : ' ',
                 unicode_pieces[GET_MOVE_PIECE(move)],
                 GET_MOVE_CAPTURE(move) ? 1 : 0,
                 GET_MOVE_DOUBLE_PUSH(move) ? 1 : 0,
