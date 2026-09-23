@@ -6,6 +6,27 @@
 #include "bit_manipulation.h"
 #include <stdio.h>
 
+#define ENCODE_MOVE(source, target, piece, promoted, capture, double_push, enpassant, castling) \
+    (source) | \
+    (target << 6) | \
+    (piece << 12) | \
+    (promoted << 16) | \
+    (capture << 20) | \
+    (double_push << 21) | \
+    (enpassant << 22) | \
+    (castling << 23) \
+
+#define GET_MOVE_SOURCE(move) (move & 0x3f)
+#define GET_MOVE_TARGET(move) ((move & 0xfc0) >> 6)
+#define GET_MOVE_PIECE(move) ((move & 0xf000) >> 12)
+#define GET_MOVE_PROMOTED(move) ((move & 0xf0000) >> 16)
+#define GET_MOVE_CAPTURE(move) (move & 0x100000) 
+#define GET_MOVE_DOUBLE_PUSH(move) (move & 0x200000)
+#define GET_MOVE_ENPASSANT(move) (move & 0x400000)
+#define GET_MOVE_CASTLING(move) (move & 0x800000)
+
+
+
 static inline int is_square_attacked(int square, int side) {
     if ((side == WHITE) && (pawn_attacks[BLACK][square] & bitboards[P])) return 1;
     if ((side == BLACK) && (pawn_attacks[WHITE][square] & bitboards[p])) return 1;
