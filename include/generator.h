@@ -26,6 +26,21 @@
 #define GET_MOVE_CASTLING(move) (move & 0x800000)
 
 
+typedef struct {
+    int moves[256];
+    int count;
+} moves;
+
+extern char promoted_pieces[];
+
+void print_move(int);
+void print_move_list(moves*);
+
+
+static inline void add_move(moves* move_list, int move) {
+    move_list->moves[move_list->count] = move;
+    move_list->count++;
+}
 
 static inline int is_square_attacked(int square, int side) {
     if ((side == WHITE) && (pawn_attacks[BLACK][square] & bitboards[P])) return 1;
