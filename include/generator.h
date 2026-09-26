@@ -25,6 +25,24 @@
 #define GET_MOVE_ENPASSANT(move) (move & 0x400000)
 #define GET_MOVE_CASTLING(move) (move & 0x800000)
 
+#define COPY_BOARD() \
+    u64 bitboards_copy[12], occupancies_copy[3]; \
+    int side_copy, enpassant_copy, castle_copy; \
+    memcpy(bitboards_copy, bitboards, 96); \
+    memcpy(occupancies_copy, occupancies, 24); \
+    side_copy = side; \
+    enpassant_copy = enpassant; \
+    castle_copy = castle;
+
+#define RESTORE_BOARD() \
+    memcpy(bitboards, bitboards_copy, 96); \
+    memcpy(occupancies, occupancies_copy, 24); \
+    side = side_copy; \
+    enpassant = enpassant_copy; \
+    castle = castle_copy;
+
+
+
 
 typedef struct {
     int moves[256];
