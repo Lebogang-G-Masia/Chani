@@ -94,6 +94,10 @@ static inline int make_move(int move, int move_flag) {
         }
         enpassant = no_sq;
 
+        if (double_push_flag) {
+            (side == WHITE) ? (enpassant = target_square + 8) : (enpassant = target_square - 8);
+        }
+
     } else {
         if (GET_MOVE_CAPTURE(move)) 
             make_move(move, ALL_MOVES);
