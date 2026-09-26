@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
@@ -124,29 +125,51 @@ void test_generate_moves() {
     side = WHITE;
     enpassant = no_sq;
 
-    int saved_stdout = dup(STDOUT_FILENO);
-    int temp_fd = open("temp_moves.txt", O_RDWR | O_CREAT | O_TRUNC, 0666);
-    dup2(temp_fd, STDOUT_FILENO);
+    moves move_list[1];
+    move_list->count = 0;
 
-    generate_moves();
-    fflush(stdout);
+    generate_moves(move_list);
 
-    dup2(saved_stdout, STDOUT_FILENO);
-    close(saved_stdout);
+    int found_push = 0, found_double = 0, found_capture = 0;
+    for (int i = 0; i < move_list->count; i++) {
+        int move = move_list->moves[i];
+        int src = GET_MOVE_SOURCE(move);
+        int tgt = GET_MOVE_TARGET(move);
+        int cap = GET_MOVE_CAPTURE(move);
+        int dbl = GET_MOVE_DOUBLE_PUSH(move);
 
-    char buffer[1024] = {0};
-    lseek(temp_fd, 0, SEEK_SET);
-    read(temp_fd, buffer, sizeof(buffer) - 1);
-    close(temp_fd);
-    remove("temp_moves.txt");
+        if (src == e2 && tgt == e3 && !cap && !dbl) found_push = 1;
+        if (src == e2 && tgt == e4 && !cap && dbl) found_double = 1;
+        if (src == e2 && tgt == d3 && cap) found_capture = 1;
+    }
 
-    ASSERT_TEST(strstr(buffer, "pawn push: e2e3") != NULL, "generate_moves: generates pawn push e2e3");
-    ASSERT_TEST(strstr(buffer, "double pawn push: e2e4") != NULL, "generate_moves: generates double pawn push e2e4");
-    ASSERT_TEST(strstr(buffer, "pawn capture: e2d3") != NULL, "generate_moves: generates pawn capture e2d3");
-    
-    // Negative checks to ensure invalid moves aren't generated
-    ASSERT_TEST(strstr(buffer, "pawn capture: e2f3") == NULL, "generate_moves: does NOT generate invalid capture e2f3");
-    ASSERT_TEST(strstr(buffer, "pawn push: e2e5") == NULL, "generate_moves: does NOT generate invalid push e2e5");
+    ASSERT_TEST(found_push, "generate_moves: generates pawn push e2e3");
+    ASSERT_TEST(found_double, "generate_moves: generates double pawn push e2e4");
+    ASSERT_TEST(found_capture, "generate_moves: generates pawn capture e2d3");
+    ASSERT_TEST(move_list->count == 3, "generate_moves: exactly 3 expected moves generated");
+}
+
+void test_make_move() {
+    for (int i = 0; i < 12; i++) bitboards[i] = 0ULL;
+    for (int i = 0; i < 3; i++) occupancies[i] = 0ULL;
+
+    SET_BIT(bitboards[P], e2);
+    occupancies[WHITE] |= (1ULL << e2);
+    occupancies[BOTH] |= (1ULL << e2);
+
+    SET_BIT(bitboards[p], d3);
+    occupancies[BLACK] |= (1ULL << d3);
+    occupancies[BOTH] |= (1ULL << d3);
+
+    side = WHITE;
+    enpassant = no_sq;
+
+    int move = ENCODE_MOVE(e2, d3, P, 0, 1, 0, 0, 0);
+    make_move(move, ALL_MOVES);
+
+    ASSERT_TEST(GET_BIT(bitboards[P], e2) == 0, "make_move: source square cleared");
+    ASSERT_TEST(GET_BIT(bitboards[P], d3) != 0, "make_move: target square set");
+    ASSERT_TEST(GET_BIT(bitboards[p], d3) == 0, "make_move: captured piece removed");
 }
 
 void test_io() {
@@ -183,26 +206,110 @@ void test_sliders_attacks_init() {
     ASSERT_TEST(get_rook_attacks(e4, block) == rook_attacks_on_the_fly(e4, block), "rook magic blocked");
 }
 
-int main() {
+
+typedef void (*test_func_t)();
+typedef struct {
+    const char *name;
+    test_func_t func;
+} test_case_t;
+
+test_case_t chani_tests[] = {
+    {"test_bit_manipulation", test_bit_manipulation},
+    {"test_pawn_attacks", test_pawn_attacks},
+    {"test_knight_attacks", test_knight_attacks},
+    {"test_king_attacks", test_king_attacks},
+    {"test_bishop_attacks", test_bishop_attacks},
+    {"test_rook_attacks", test_rook_attacks},
+    {"test_attacks_on_the_fly", test_attacks_on_the_fly},
+    {"test_is_square_attacked", test_is_square_attacked},
+    {"test_generate_moves", test_generate_moves},
+    {"test_make_move", test_make_move},
+    {"test_io", test_io},
+    {"test_leaper_attacks_init", test_leaper_attacks_init},
+    {"test_set_occupancy", test_set_occupancy},
+    {"test_sliders_attacks_init", test_sliders_attacks_init}
+};
+int num_tests = sizeof(chani_tests) / sizeof(chani_tests[0]);
+
+void print_menu() {
+    printf("\n==================================================\n");
+    printf("CHANI INTERACTIVE TEST SUITE\n");
     printf("==================================================\n");
-    printf("RUNNING TESTS\n");
+    for (int i = 0; i < num_tests; i++) {
+        printf("%2d) %s\n", i + 1, chani_tests[i].name);
+    }
+    printf(" a) Run all tests\n");
+    printf(" p) Run all tests with pause in between\n");
+    printf(" q) Quit\n");
     printf("==================================================\n");
-    
-    test_bit_manipulation();
-    test_pawn_attacks();
-    test_knight_attacks();
-    test_king_attacks();
-    test_bishop_attacks();
-    test_rook_attacks();
-    test_attacks_on_the_fly();
-    test_is_square_attacked();
-    test_generate_moves();
-    test_io();
-    test_leaper_attacks_init();
-    test_set_occupancy();
-    test_sliders_attacks_init();
-    
-    printf("==================================================\n");
+    printf("Select an option: ");
+}
+
+void clear_input_buffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void wait_for_enter() {
+    printf("\nPress [Enter] to continue...");
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+int main(int argc, char *argv[]) {
+    init(); // Ensure global initialization
+
+    if (argc > 1) {
+        if (strcmp(argv[1], "--all") == 0) {
+            for (int i = 0; i < num_tests; i++) chani_tests[i].func();
+        } else if (strcmp(argv[1], "--test") == 0 && argc > 2) {
+            int found = 0;
+            for (int i = 0; i < num_tests; i++) {
+                if (strcmp(chani_tests[i].name, argv[2]) == 0) {
+                    chani_tests[i].func();
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) printf("Test '%s' not found.\n", argv[2]);
+        } else {
+            printf("Usage:\n  %s\n  %s --all\n  %s --test <test_name>\n", argv[0], argv[0], argv[0]);
+            return 1;
+        }
+        goto summary;
+    }
+
+    char choice[10];
+    while (1) {
+        print_menu();
+        if (!fgets(choice, sizeof(choice), stdin)) break;
+        
+        if (choice[0] == 'q' || choice[0] == 'Q') {
+            return 0;
+        } else if (choice[0] == 'a' || choice[0] == 'A') {
+            for (int i = 0; i < num_tests; i++) chani_tests[i].func();
+            break;
+        } else if (choice[0] == 'p' || choice[0] == 'P') {
+            for (int i = 0; i < num_tests; i++) {
+                printf("\n--- Running %s ---\n", chani_tests[i].name);
+                chani_tests[i].func();
+                if (i < num_tests - 1) wait_for_enter();
+            }
+            break;
+        } else {
+            int test_idx = atoi(choice);
+            if (test_idx >= 1 && test_idx <= num_tests) {
+                printf("\n--- Running %s ---\n", chani_tests[test_idx - 1].name);
+                chani_tests[test_idx - 1].func();
+                wait_for_enter();
+            } else {
+                printf("Invalid selection.\n");
+            }
+        }
+    }
+
+summary:
+    printf("\n==================================================\n");
     printf("TEST SUMMARY\n");
     printf("==================================================\n");
     printf("Tests Run    : %d\n", tests_run);
