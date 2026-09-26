@@ -98,6 +98,27 @@ static inline int make_move(int move, int move_flag) {
             (side == WHITE) ? (enpassant = target_square + 8) : (enpassant = target_square - 8);
         }
 
+        if (castling_flag) {
+            switch (target_square) {
+                case (g1):
+                    POP_BIT(bitboards[R], h1);
+                    SET_BIT(bitboards[R], f1);
+                    break;
+                case (c1):
+                    POP_BIT(bitboards[R], a1);
+                    SET_BIT(bitboards[R], d1);
+                    break;
+                case (g8):
+                    POP_BIT(bitboards[r], h8);
+                    SET_BIT(bitboards[r], f8);
+                    break;
+                case (c8):
+                    POP_BIT(bitboards[r], a8);
+                    SET_BIT(bitboards[r], d8);
+                    break;
+            }
+        }
+
     } else {
         if (GET_MOVE_CAPTURE(move)) 
             make_move(move, ALL_MOVES);
