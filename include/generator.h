@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "attacks.h"
 #include "bit_manipulation.h"
+
+#include <string.h>
 #include <stdio.h>
 
 #define ENCODE_MOVE(source, target, piece, promoted, capture, double_push, enpassant, castling) \
@@ -41,7 +43,33 @@
     enpassant = enpassant_copy; \
     castle = castle_copy;
 
+enum {
+    ALL_MOVES,
+    ONLY_CAPTURES
+};
 
+static inline int make_move(int move, int move_flag) {
+    if (move_flag == ALL_MOVES) {
+        COPY_BOARD();
+
+        int source_square = GET_MOVE_SOURCE(move);
+        int target_square = GET_MOVE_TARGET(move);
+        int piece = GET_MOVE_PIECE(move);
+        int promoted_piece = GET_MOVE_PROMOTED(move);
+        int capture_flag = GET_MOVE_CAPTURE(move);
+        int double_push_flag = GET_MOVE_DOUBLE_PUSH(move);
+        int enpassant_flag = GET_MOVE_ENPASSANT(move);
+        int castling_flag = GET_MOVE_CASTLING(move);
+
+        POP_BIT(bitboards[piece], source_square);
+        SET_BIT(bitboards[piece], target_square);
+
+    } else {
+        if (GET_MOVE_CAPTURE(move)) 
+            make_move(move, ALL_MOVES);
+        else return 0;
+    }
+}
 
 
 typedef struct {

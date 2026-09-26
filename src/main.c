@@ -14,17 +14,29 @@ int main() {
 
     init();
 
-    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1");
-    print_board();
+    parse_fen(tricky_position);
+    //print_board();
 
-    COPY_BOARD();
+    moves move_list[1];
 
-    parse_fen(empty_board);
-    print_board();
+    generate_moves(move_list);
 
-    RESTORE_BOARD();
+    for (int move_count = 0; move_count < move_list->count; move_count++) {
+        int move = move_list->moves[move_count];
 
-    print_board(); 
+        COPY_BOARD();
+
+        make_move(move, ALL_MOVES);
+       
+        print_board();
+        printf("Move: %c%s",
+                ascii_pieces[GET_MOVE_PIECE(move)],
+                square_to_coordinates[GET_MOVE_TARGET(move)]);
+ 
+        getchar();
+        RESTORE_BOARD();
+        print_board();
+    }
 
     return 0;
 }
