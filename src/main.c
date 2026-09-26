@@ -29,13 +29,18 @@ int main() {
         make_move(move, ALL_MOVES);
        
         print_board();
-        printf("Move: %c%s",
-                ascii_pieces[GET_MOVE_PIECE(move)],
-                square_to_coordinates[GET_MOVE_TARGET(move)]);
+        if (GET_MOVE_CAPTURE(move)) {
+            printf("Move: %cx%s",
+                    ascii_pieces[GET_MOVE_PIECE(move)],
+                    square_to_coordinates[GET_MOVE_TARGET(move)]);
+        } else {
+            printf("Move: %c%s",
+                    ascii_pieces[GET_MOVE_PIECE(move)],
+                    square_to_coordinates[GET_MOVE_TARGET(move)]);
+        }
  
         getchar();
         RESTORE_BOARD();
-        print_board();
     }
 
     return 0;
