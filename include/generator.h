@@ -84,6 +84,11 @@ static inline int make_move(int move, int move_flag) {
             }
         }
 
+        if (promoted_piece) {
+            POP_BIT(bitboards[(side == WHITE) ? P : p], target_square);
+            SET_BIT(bitboards[promoted_piece], target_square);
+        }
+
     } else {
         if (GET_MOVE_CAPTURE(move)) 
             make_move(move, ALL_MOVES);
