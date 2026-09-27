@@ -11,6 +11,19 @@ char promoted_pieces[] = {
     [n] = 'n',
 };
 
+const int castling_rights[64] = {
+     7, 15, 15, 15,  3, 15, 15, 11,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    13, 15, 15, 15, 12, 15, 15, 14
+};
+
+
+
 void print_move(int move) {
     printf("%s%s%c\n", square_to_coordinates[GET_MOVE_SOURCE(move)], 
             square_to_coordinates[GET_MOVE_TARGET(move)], 

@@ -48,6 +48,8 @@ enum {
     ONLY_CAPTURES
 };
 
+extern const int castling_rights[64];
+
 static inline int make_move(int move, int move_flag) {
     if (move_flag == ALL_MOVES) {
         COPY_BOARD();
@@ -119,6 +121,9 @@ static inline int make_move(int move, int move_flag) {
             }
         }
 
+        castle &= castling_rights[source_square];
+        castle &= castling_rights[target_square];
+
     } else {
         if (GET_MOVE_CAPTURE(move)) 
             make_move(move, ALL_MOVES);
@@ -131,6 +136,7 @@ typedef struct {
     int moves[256];
     int count;
 } moves;
+
 
 extern char promoted_pieces[];
 
