@@ -124,6 +124,18 @@ static inline int make_move(int move, int move_flag) {
         castle &= castling_rights[source_square];
         castle &= castling_rights[target_square];
 
+        memset(occupancies, 0ULL, 24);
+
+        for (int bb_piece = P; bb_piece <= K; bb_piece++)
+            occupancies[WHITE] |= bitboards[bb_piece];
+        
+
+        for (int bb_piece = p; bb_piece <= k; bb_piece++)
+            occupancies[BLACK] |= bitboards[bb_piece];
+
+        occupancies[BOTH] |= occupancies[WHITE];
+        occupancies[BOTH] |= occupancies[BLACK];
+
     } else {
         if (GET_MOVE_CAPTURE(move)) 
             make_move(move, ALL_MOVES);
