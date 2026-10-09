@@ -50,6 +50,17 @@ enum {
 
 extern const int castling_rights[64];
 
+static inline int is_square_attacked(int square, int side) {
+    if ((side == WHITE) && (pawn_attacks[BLACK][square] & bitboards[P])) return 1;
+    if ((side == BLACK) && (pawn_attacks[WHITE][square] & bitboards[p])) return 1;
+    if (knight_attacks[square] & ((side == WHITE) ? bitboards[N] : bitboards[n])) return 1;
+    if (king_attacks[square] & ((side == WHITE) ? bitboards[K] : bitboards[k])) return 1;
+    if (get_bishop_attacks(square, occupancies[BOTH]) & ((side == WHITE) ? bitboards[B] : bitboards[b])) return 1;
+    if (get_rook_attacks(square, occupancies[BOTH]) & ((side == WHITE) ? bitboards[R] : bitboards[r])) return 1;
+    if (get_queen_attacks(square, occupancies[BOTH]) & ((side == WHITE) ? bitboards[Q] : bitboards[q])) return 1;
+    return 0;
+}
+
 static inline int make_move(int move, int move_flag) {
     if (move_flag == ALL_MOVES) {
         COPY_BOARD();
@@ -128,13 +139,22 @@ static inline int make_move(int move, int move_flag) {
 
         for (int bb_piece = P; bb_piece <= K; bb_piece++)
             occupancies[WHITE] |= bitboards[bb_piece];
-        
 
         for (int bb_piece = p; bb_piece <= k; bb_piece++)
             occupancies[BLACK] |= bitboards[bb_piece];
 
         occupancies[BOTH] |= occupancies[WHITE];
         occupancies[BOTH] |= occupancies[BLACK];
+
+        side ^= 1;
+
+        if (is_square_attacked((side == WHITE) ?
+                    get_ls1b_index(bitboards[k]) : get_ls1b_index(bitboards[K]), side))
+        {
+            RESTORE_BOARD();
+            return 0;
+        } else
+            return 1;
 
     } else {
         if (GET_MOVE_CAPTURE(move)) 
@@ -159,17 +179,6 @@ void print_move_list(moves*);
 static inline void add_move(moves* move_list, int move) {
     move_list->moves[move_list->count] = move;
     move_list->count++;
-}
-
-static inline int is_square_attacked(int square, int side) {
-    if ((side == WHITE) && (pawn_attacks[BLACK][square] & bitboards[P])) return 1;
-    if ((side == BLACK) && (pawn_attacks[WHITE][square] & bitboards[p])) return 1;
-    if (knight_attacks[square] & ((side == WHITE) ? bitboards[N] : bitboards[n])) return 1;
-    if (king_attacks[square] & ((side == WHITE) ? bitboards[K] : bitboards[k])) return 1;
-    if (get_bishop_attacks(square, occupancies[BOTH]) & ((side == WHITE) ? bitboards[B] : bitboards[b])) return 1;
-    if (get_rook_attacks(square, occupancies[BOTH]) & ((side == WHITE) ? bitboards[R] : bitboards[r])) return 1;
-    if (get_queen_attacks(square, occupancies[BOTH]) & ((side == WHITE) ? bitboards[Q] : bitboards[q])) return 1;
-    return 0;
 }
 
 static inline void generate_moves(moves* move_list) {

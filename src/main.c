@@ -14,7 +14,7 @@ int main() {
 
     init();
 
-    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1");
+    parse_fen("r3k2r/p1ppRpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1");
     //print_board();
 
     moves move_list[1];
@@ -26,23 +26,36 @@ int main() {
 
         COPY_BOARD();
 
-        make_move(move, ALL_MOVES);
+        if (!make_move(move, ALL_MOVES)) continue;
+
        
-        //print_board();
-        print_bitboard(occupancies[BLACK]);
+        print_board();
         if (GET_MOVE_CAPTURE(move)) {
-            printf("Move: %cx%s",
-                    ascii_pieces[GET_MOVE_PIECE(move)],
-                    square_to_coordinates[GET_MOVE_TARGET(move)]);
+
+            if (GET_MOVE_PIECE(move) == P || GET_MOVE_PIECE(move) == p) {
+                char source = square_to_coordinates[GET_MOVE_SOURCE(move)][0];
+                printf("Move: %cx%s",
+                        source,
+                        square_to_coordinates[GET_MOVE_TARGET(move)]);
+            } else {
+                printf("Move: %cx%s",
+                        ascii_pieces[GET_MOVE_PIECE(move)],
+                        square_to_coordinates[GET_MOVE_TARGET(move)]);
+            }
         } else {
-            printf("Move: %c%s",
-                    ascii_pieces[GET_MOVE_PIECE(move)],
+            if (GET_MOVE_PIECE(move) == P || GET_MOVE_PIECE(move) == p) {
+                printf("Move: %s",
                     square_to_coordinates[GET_MOVE_TARGET(move)]);
+            } else {
+                printf("Move: %c%s",
+                        ascii_pieces[GET_MOVE_PIECE(move)],
+                        square_to_coordinates[GET_MOVE_TARGET(move)]);
+            }
         }
  
         getchar();
         RESTORE_BOARD();
-        print_bitboard(occupancies[BLACK]);
+        print_board();
         getchar();
     }
 
