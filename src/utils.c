@@ -1,6 +1,14 @@
 #include "../include/utils.h"
 #include "../include/attacks.h"
 
+#ifdef WIN64
+    #include <windows.h>
+#else
+#include <sys/time.h>
+#endif
+
+#include <stddef.h>
+
 const char* square_to_coordinates[] = {
     "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
     "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
@@ -31,6 +39,15 @@ int char_pieces[] = {
 
 };
 
+int get_time_ms() {
+#ifdef WIN64
+    return GetTickCount();
+#else
+    struct timeval time_value;
+    gettimeofday(&time_value, NULL);
+    return time_value.tv_sec * 1000 + time_value.tv_usec / 1000;
+#endif
+}
 
 void init() {
     init_leaper_attacks();

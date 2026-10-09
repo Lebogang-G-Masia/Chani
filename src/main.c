@@ -14,12 +14,14 @@ int main() {
 
     init();
 
-    parse_fen("r3k2r/p1ppRpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1");
+    parse_fen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1");
     //print_board();
 
     moves move_list[1];
 
     generate_moves(move_list);
+
+    int start = get_time_ms();
 
     for (int move_count = 0; move_count < move_list->count; move_count++) {
         int move = move_list->moves[move_count];
@@ -58,6 +60,8 @@ int main() {
         print_board();
         getchar();
     }
+
+    printf("Time taken to execute: %d ms \n", get_time_ms() - start);
 
     return 0;
 }

@@ -38,5 +38,7 @@ extern char *unicode_pieces[12];
 extern int char_pieces[];
 
 void init();
+int get_time_ms();
+
 
 #endif // CHANI_UTILS
