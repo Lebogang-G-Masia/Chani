@@ -15,15 +15,12 @@ int main() {
 
     init();
 
-    parse_fen(start_position);
+    parse_fen(tricky_position);
     print_board();
 
     int start = get_time_ms();
 
-    perft_driver(6);
-
-    printf("Time taken to execute: %d ms \n", get_time_ms() - start);
-    printf("Nodes: %ld\n", nodes);
+    perft_test(5);
 
     return 0;
 }

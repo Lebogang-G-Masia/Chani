@@ -25,4 +25,6 @@ static inline void perft_driver(int depth) {
     }
 }
 
+void perft_test(int);
+
 #endif // CHANI_PERFT
