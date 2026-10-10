@@ -173,6 +173,7 @@ typedef struct {
 extern char promoted_pieces[];
 
 void print_move(int);
+char* get_move(int);
 void print_move_list(moves*);
 
 

@@ -20,7 +20,10 @@ int main() {
 
     int start = get_time_ms();
 
-    perft_test(5);
+    //perft_test(5);
+    //getchar();
 
+    print_move(ENCODE_MOVE(e2, e4, P, 0, 0, 0, 0, 0));
+    print_move(ENCODE_MOVE(e7, e7, P, Q, 0, 0, 0, 0));
     return 0;
 }

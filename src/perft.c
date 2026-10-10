@@ -1,5 +1,5 @@
 #include "../include/perft.h"
-#include <math.h>
+#include <stdlib.h>
 
 void perft_test(int depth) {
 
@@ -24,11 +24,12 @@ void perft_test(int depth) {
 
         RESTORE_BOARD();
 
-        printf("    move: %s%s%c    nodes: %ld\n", square_to_coordinates[GET_MOVE_SOURCE(move)], 
-            square_to_coordinates[GET_MOVE_TARGET(move)], 
-            promoted_pieces[GET_MOVE_PROMOTED(move)],
-            old_nodes);
+        char* move_str = get_move(move);
+        printf("    move: %s\t\t nodes: %ld\n",
+                move_str,
+                old_nodes);
 
+        free(move_str);
     }
     int end = get_time_ms();
     float total_time = (end - start) / 1000;
