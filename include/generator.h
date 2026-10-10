@@ -182,6 +182,8 @@ static inline void add_move(moves* move_list, int move) {
 }
 
 static inline void generate_moves(moves* move_list) {
+    move_list->count = 0;
+    
     int source_square;
     int target_square;
 

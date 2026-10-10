@@ -15,7 +15,7 @@ clean:
 	rm -rf $(TARGET) $(TEST_TARGET)
 
 run: $(SRC)
-	$(CC) $(CFLAGS) $^ -o $(TARGET)
+	$(CC) -oFast $(CFLAGS) $^ -o $(TARGET) 
 	./$(TARGET)
 
 TEST_SRC = $(filter-out src/main.c, $(wildcard src/*.c)) tests/main_test.c
