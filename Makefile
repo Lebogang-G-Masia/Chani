@@ -2,6 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra
 SRC = $(wildcard src/*.c)
 TARGET = chani
+OPTIM = -Ofast
 
 all: $(TARGET)
 
@@ -15,7 +16,7 @@ clean:
 	rm -rf $(TARGET) $(TEST_TARGET)
 
 run: $(SRC)
-	$(CC) -oFast $(CFLAGS) $^ -o $(TARGET) 
+	$(CC) $(OPTIM) $(CFLAGS) $^ -o $(TARGET) 
 	./$(TARGET)
 
 TEST_SRC = $(filter-out src/main.c, $(wildcard src/*.c)) tests/main_test.c
