@@ -1,6 +1,7 @@
 #include "../include/uci.h"
 #include "../include/generator.h"
 #include <string.h>
+#include <stdlib.h>
 
 int parse_move(char* move_string) {
     moves move_list[1];
@@ -75,4 +76,17 @@ void parse_position(char* command) {
         }
         printf("%s\n", current_char);
     }
+}
+
+void parse_go(char* command) {
+    int depth = -1;
+
+    char* current_depth = NULL;
+    
+    if ((current_depth = strstr(command, "depth")))
+        depth = atoi(current_depth + 6);
+
+    // search_position(depth);
+    
+    printf("depth: %d\n", depth);
 }

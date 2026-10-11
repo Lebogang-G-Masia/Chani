@@ -161,6 +161,7 @@ static inline int make_move(int move, int move_flag) {
             make_move(move, ALL_MOVES);
         else return 0;
     }
+    return 1;
 }
 
 
