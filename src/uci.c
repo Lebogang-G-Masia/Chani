@@ -1,5 +1,6 @@
 #include "../include/uci.h"
 #include "../include/generator.h"
+#include <string.h>
 
 int parse_move(char* move_string) {
     moves move_list[1];
@@ -39,4 +40,39 @@ int parse_move(char* move_string) {
     }
 
     return 0;
+}
+
+void parse_position(char* command) {
+    command += 9;
+    char* current_char = command;
+
+    if (strncmp(command, "startpos", 8) == 0)
+        parse_fen(start_position);
+    else {
+        current_char = strstr(command, "fen");
+
+        if (current_char == NULL)
+            parse_fen(start_position);
+
+        else {
+            current_char += 4;
+            parse_fen(current_char);
+        }
+    }
+
+    current_char = strstr(command, "moves");
+
+    if (current_char != NULL) {
+        current_char += 6;
+        while (*current_char) {
+            int move = parse_move(current_char);
+            if (move == 0) break;
+            make_move(move, ALL_MOVES);
+
+            while (*current_char && *current_char != ' ') current_char++;
+            current_char++;
+            
+        }
+        printf("%s\n", current_char);
+    }
 }

@@ -15,22 +15,9 @@
 int main() {
 
     init();
-
-    parse_fen("r3k2r/p11pqpb1/bn2pnp1/2pPN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+    
+    parse_position("position fen r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1 moves c3b5");
     print_board();
-    getchar();
-
-    int move = parse_move("d5c6");
-
-    if (move) {
-        make_move(move, ALL_MOVES);
-        print_board();
-        print_move(move);
-        getchar();
-    }
-    else
-        printf("Illegal move!\n");
-
 
     return 0;
 }
